@@ -22,8 +22,10 @@ const logNumber = () => {
 .ButtonHolder {
   margin: 5px;
   padding: 2px;
-  width: 40px;
-  height: 40px;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .ButtonHolder .NumButton {
@@ -31,6 +33,8 @@ const logNumber = () => {
   height: 100%;
   background-color: orange;
   color: black;
+  border-radius: 50%;
+  font-size: 30px;
 }
 
 .ButtonHolder .NumButton:hover {

@@ -31,6 +31,8 @@ const emitSymbol = () => {
   height: 100%;
   background-color: lightblue;
   color: black;
+  border-radius: 50%;
+  font-size: 20px;
 }
 
 .ButtonHolder .SymButton:hover {

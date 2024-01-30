@@ -1,5 +1,5 @@
 <template>
-  <input type="text" class="NumericInput" :value="displayedNumber" @input="handleInput">
+  <input type="text" class="NumericInput" :value="displayedNumber" @input="handleInput" readonly>
 </template>
   
 <script setup lang="ts">

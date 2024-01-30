@@ -2,10 +2,11 @@
   <main>
     <div id="CalculatoroBorder">
       <div class="input">
-        <NumericInput :displayedNumber="displayedNumber" @input="updateDisplayedNumber" />
+        <NumericInput :displayedNumber="displayedNumber" @input="updateDisplayedNumber"/>
       </div>
       <div class="numbers">
         <NumericButton v-for="num in numbers" :key="num" :value="num" @number-clicked="updateDisplayedNumber" />
+        <SymbolButton :value="'.'" @symbol-clicked="handleSymbolClicked"></SymbolButton>
       </div>
       <div class="symbol">
         <Button class="HandlingButton" id="del" @click="removeLast">DEL</Button>
@@ -63,6 +64,7 @@ const removeAll = () => {
 
 const sum = () => {
   let expression = displayedNumber.value;
+  //Her kan jeg lage en if med en del regex om for eksempel /0 osv...
   if (expression !== null) {
     let result = eval(expression);
     
@@ -97,6 +99,7 @@ const sum = () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 200px;
 }
 
 .numbers {
@@ -105,6 +108,8 @@ const sum = () => {
   flex-direction: row;
   flex-wrap: wrap;
   border: 2px solid gray;
+  justify-content: center;
+  align-items: center;
 }
 
 .symbol {
@@ -117,6 +122,7 @@ const sum = () => {
 
 .history {
   grid-area: history;
+  font-size: 20px;
 }
 
 #CalculatoroBorder {
@@ -139,11 +145,11 @@ const sum = () => {
 }
 
 .HandlingButton {
-  width: 100%;
-  height: 100%;
+  width: 100px;
+  height: 40px;
   background-color: lightblue;
   color: black;
-  border-radius: 5px;
+  border-radius: 50%;
 }
 
 .HandlingButton:hover {
