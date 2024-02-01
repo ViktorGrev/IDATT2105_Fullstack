@@ -21,7 +21,12 @@
         <text>History: </text>
         <div id="result"></div>
       </div>
+      <nav>
+        <RouterLink to="/">Calculator</RouterLink>
+        <RouterLink to="/about">Forms</RouterLink>
+    </nav>
     </div>
+    
   </main>
 </template>
 
