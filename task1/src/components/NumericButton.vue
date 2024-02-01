@@ -32,9 +32,9 @@ const logNumber = () => {
   width: 100%;
   height: 100%;
   background-color: orange;
-  color: black;
   border-radius: 50%;
   font-size: 30px;
+  color: white;
 }
 
 .ButtonHolder .NumButton:hover {

@@ -62,10 +62,31 @@ const removeAll = () => {
   displayedNumber.value = null;
 }
 
+const hasDivideByZero = (expression: string) => /\/0/.test(expression);
+
 const sum = () => {
   let expression = displayedNumber.value;
   //Her kan jeg lage en if med en del regex om for eksempel /0 osv...
   if (expression !== null) {
+    
+
+    if (hasDivideByZero(expression)) {
+      let paragraph = document.createElement("p");
+
+      // Set the text content of the paragraph to the result
+      paragraph.textContent = "The result of " + expression + " is: ERROR (Cant devide on 0)";
+
+      let resultBox = document.getElementById("result");
+      if (resultBox !== null) {
+        resultBox.appendChild(paragraph);
+        displayedNumber.value = null;
+      }
+  
+      console.error("Expression contains division by zero.");
+      // Handle the case where division by zero is detected
+      return; // Exit the function
+    }
+
     let result = eval(expression);
     
     // Get the result box element
@@ -130,7 +151,7 @@ const sum = () => {
   border-width: 2px;
   border-radius: 10px;
   border-style: solid;
-  width: 500px;
+  width: 480px;
   height: 700px;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
