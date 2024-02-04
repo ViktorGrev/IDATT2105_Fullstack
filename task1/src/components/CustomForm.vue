@@ -6,7 +6,8 @@
       <FormInput v-model="email" fieldName="Email" type="text"></FormInput>
       <br>
       <label for="feedback">Your feedback:</label>
-      <textarea v-model="message" placeholder="Write here" rows="5" name="comment[text]" id="comment_text" cols="33" required></textarea>
+      <textarea v-model="message" placeholder="Write here" rows="5" name="comment[text]" id="comment_text" cols="33"
+        required></textarea>
       <button type="submit" class="btn" :disabled="!isFormValid">
         <span>Send</span>
       </button>
@@ -51,14 +52,35 @@ const isFormValid = computed(() => {
 });
 
 // Form submit handling
-const submitForm = () => {
+const submitForm = async () => {
   if (isFormValid.value) {
-    // Her kan du implementere logikk for å faktisk sende formdata til en server eller lignende
-    console.log('Form submitted with:', { name: name.value, email: email.value, message: message.value });
-    // Nullstiller skjemaet (valgfritt)
-    message.value = '';
+    try {
+      const response = await fetch('http://localhost:3000/submissions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name.value,
+          email: email.value,
+          message: message.value,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json(); // This might fail if the response is not JSON
+      console.log('Form submitted:', data);
+      // Handle success
+    } catch (error) {
+      console.error('Submission error:', error);
+      // Handle errors
+    }
   } else {
-    console.log('Form not submitted - validation failed');
+    console.log('Form not submitted');
+    // Handle form validation failure
   }
 };
 </script>
@@ -100,7 +122,7 @@ textarea {
   background: none repeat scroll 0 0 rgba(255, 255, 255, 0.151);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12) inset;
   color: #555555;
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 0.9em;
   line-height: 1.4em;
   padding: 5px 8px;
@@ -109,8 +131,8 @@ textarea {
 
 
 textarea:focus {
-    background: none repeat scroll 0 0 #FFFFFF;
-    outline-width: 0;
+  background: none repeat scroll 0 0 #FFFFFF;
+  outline-width: 0;
 }
 
 .btn {
