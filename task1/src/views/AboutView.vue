@@ -3,10 +3,6 @@
     
     <CustomForm title="Feedback form"></CustomForm>
 
-    <nav>
-        <RouterLink to="/">Calculator</RouterLink>
-        <RouterLink to="/about">Forms</RouterLink>
-    </nav>
   </div>
 </template>
 
@@ -15,11 +11,14 @@
 </script>
 
 <style>
-  .about {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
+  body {
+    font-family: 'Poppins', sans-serif; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.5rem;
+  background-color:#222222;
   }
 </style>
