@@ -5,7 +5,7 @@
           <NumericInput :displayedNumber="displayedNumber" @input="updateDisplayedNumber"/>
         </div>
         <div class="numbers">
-          <NumericButton v-for="num in numbers" :key="num" :value="num" @number-clicked="updateDisplayedNumber" />
+          <NumericButton v-for="num in numbers" :key="num" :value="num" :id="num" @number-clicked="updateDisplayedNumber" />
           <SymbolButton :value="'.'" @symbol-clicked="handleSymbolClicked"></SymbolButton>
         </div>
         <div class="symbol">
@@ -15,12 +15,14 @@
           <SymbolButton :value="'*'" @symbol-clicked="handleSymbolClicked"></SymbolButton>
           <SymbolButton :value="'-'" @symbol-clicked="handleSymbolClicked"></SymbolButton>
           <SymbolButton :value="'+'" @symbol-clicked="handleSymbolClicked"></SymbolButton>
-          <Button class="HandlingButton" id="equal" @click="sum">=</Button>
+          <Button class="HandlingButton" id="equal" @click="sum" data-testid="equal-button">=</Button>
         </div>
         <div class="history">
           <text>History: </text>
-          <div id="result"></div>
+        <div id="result">
+          <p v-for="(result, index) in calculationResults" :key="index">{{ result }}</p>
         </div>
+      </div>
         <nav>
           <RouterLink to="/">Calculator</RouterLink>
           <RouterLink to="/about">Forms</RouterLink>
@@ -37,86 +39,53 @@
   import SymbolButton from '@/components/SymbolButton.vue';
   
   const numbers = Array.from({ length: 10 }, (_, index) => index);
-  const displayedNumber = ref<string | null>(null);
-  
-  const updateDisplayedNumber = (number: string) => {
-    if (displayedNumber.value === null || displayedNumber.value === '0') {
-      displayedNumber.value = number + "";
-    } else {
-      displayedNumber.value += number + "";
-    }
-  };
-  
-  const handleSymbolClicked = (symbol: string) => {
-    if (displayedNumber.value === null || displayedNumber.value === '0') {
-      displayedNumber.value = symbol;
-    } else {
-      displayedNumber.value += symbol;
-    }
-  };
-  
-  const removeLast = () => {
-    if (displayedNumber.value !== null && displayedNumber.value !== '0') {
-      let numberArray = displayedNumber.value.split('');
-      numberArray.pop();
-      displayedNumber.value = numberArray.join('');
-    }
+const displayedNumber = ref<string | null>(null);
+  const calculationResults = ref<string[]>([]);
+
+const updateDisplayedNumber = (number: string) => {
+  if (displayedNumber.value === null || displayedNumber.value === '0') {
+    displayedNumber.value = number + "";
+  } else {
+    displayedNumber.value += number;
   }
-  
-  const removeAll = () => {
-    displayedNumber.value = null;
+};
+
+const handleSymbolClicked = (symbol: string) => {
+  if (displayedNumber.value !== null) {
+    displayedNumber.value += symbol;
   }
+};
+
+const removeLast = () => {
+  if (displayedNumber.value !== null && displayedNumber.value !== '0') {
+    displayedNumber.value = displayedNumber.value.slice(0, -1) || null;
+  }
+};
+
+const removeAll = () => {
+  displayedNumber.value = null;
+};
   
   const hasDivideByZero = (expression: string) => /\/0/.test(expression);
   
   const sum = () => {
-    let expression = displayedNumber.value;
-    //Her kan jeg lage en if med en del regex om for eksempel /0 osv...
-    if (expression !== null) {
-      
-  
-      if (hasDivideByZero(expression)) {
-        let paragraph = document.createElement("p");
-  
-        // Set the text content of the paragraph to the result
-        paragraph.textContent = "The result of " + expression + " is: ERROR (Cant devide on 0)";
-  
-        let resultBox = document.getElementById("result");
-        if (resultBox !== null) {
-          resultBox.appendChild(paragraph);
-          displayedNumber.value = null;
-        }
-    
-        console.error("Expression contains division by zero.");
-        // Handle the case where division by zero is detected
-        return; // Exit the function
-      }
-  
+  let expression = displayedNumber.value;
+  if (expression !== null) {
+    if (hasDivideByZero(expression)) {
+      calculationResults.value.push("ERROR (Can't divide by 0)");
+      displayedNumber.value = null;
+      return;
+    }
+    try {
       let result = eval(expression);
-      
-      // Get the result box element
-      let resultBox = document.getElementById("result");
-  
-      // Check if resultBox exists
-      if (resultBox !== null) {
-        // Create a new paragraph element
-        let paragraph = document.createElement("p");
-  
-        // Set the text content of the paragraph to the result
-        paragraph.textContent = "The result of " + expression + " is: " + result;
-  
-  
-        // Append the paragraph to the result box
-        resultBox.appendChild(paragraph);
-  
-        displayedNumber.value = result;
-      } else {
-        console.error("Result box element not found.");
-      }
-    } else {
-      console.error("The value is null."); // Handle the case where the value is null
+      calculationResults.value.push(`The result of ${expression} is: ${result}`);
+      displayedNumber.value = String(result);
+    } catch (e) {
+      calculationResults.value.push("ERROR (Invalid expression)");
+      displayedNumber.value = null;
     }
   }
+};
   </script>
   
   <style scoped>

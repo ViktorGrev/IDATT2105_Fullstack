@@ -19,89 +19,75 @@ describe('Calculator.vue', () => {
     });
 
     it('updates displayed number on numeric button click', async () => {
-        const button = wrapper.findAllComponents(NumericButton)[0];
-        await button.trigger('click');
-
-        (wrapper.vm as any).updateDisplayedNumber('0');
-        await wrapper.vm.$nextTick();
-
+        // Ensure you have enough buttons rendered
+        const numericButtons = wrapper.findAllComponents(NumericButton);
+        // Get the value prop of the second button
+        const buttonValue = numericButtons[1].props('value');
+        // Simulate a custom event on the second button, using the value prop
+        numericButtons[1].vm.$emit('number-clicked', buttonValue);
+        await nextTick(); // Wait for Vue to update
+    
         const input = wrapper.findComponent(NumericInput);
-
-        const displayedNumber = input.props('displayedNumber');
-
-        expect(displayedNumber).toBe('0');
+        expect(input.props('displayedNumber')).toBe(String(buttonValue));
     });
 
-    it('appends symbol on symbol button click', async () => {
-        const symbolButton = wrapper.findComponent({ name: 'SymbolButton', props: { value: '+' } });
-        await symbolButton.trigger('click');
-
-        (wrapper.vm as any).handleSymbolClicked('+');
-        await wrapper.vm.$nextTick();
-
-        const input = wrapper.findComponent(NumericInput);
-        const displayedNumber = input.props('displayedNumber') || '';
-        expect(displayedNumber).toContain('+');
-    });
-
-    it('clears displayed number on clear', async () => {
-        await wrapper.findAllComponents(NumericButton)[1].trigger('click'); // Click '1'
-        await wrapper.find('#clear').trigger('click'); // Trigger clear
+    it('not append symbol on symbol button click when ', async () => {
+        const wrapper = mount(Calculator);
+        await wrapper.vm.handleSymbolClicked('+');
+        await wrapper.find('#equal').trigger('click');
         const input = wrapper.findComponent(NumericInput);
         expect(input.props('displayedNumber')).toBeNull();
     });
 
-
-
-
-
-
-
-
-    /*
-
-    
-    it('correctly calculates a simple addition', async () => {
-        // Setup component with Vue Test Utils
+    it('clears displayed number on clear', async () => {
         const wrapper = mount(Calculator);
-    
-        await wrapper.setData({ displayedNumber: '1+1' });
-        await wrapper.find('#equal').trigger('click');
-    
-        // Check the result
-        expect(wrapper.vm.displayedNumber).toBe('2');
+        const input = wrapper.findComponent(NumericInput);
+        await wrapper.vm.updateDisplayedNumber('2');
+        await wrapper.find('#clear').trigger('click'); // Trigger clear
+        expect(input.props('displayedNumber')).toBeNull();
     });
 
-    it('respects the order of operations', async () => {
+    it('removes the last number', async () => {
+        const wrapper = mount(Calculator);
+        const input = wrapper.findComponent(NumericInput);
+        await wrapper.vm.updateDisplayedNumber('200');
+        await wrapper.find('#del').trigger('click'); // Trigger clear
+        expect(input.props('displayedNumber')).toBe('20');
+    });
+
+
+    it('correctly calculates a simple addition', async () => {
         const wrapper = mount(Calculator);
     
-        // Input for '2 + 3 * 4' (expected result should be '14', not '20')
-        await wrapper.setData({ displayedNumber: '2+3*4' });
+        await wrapper.vm.updateDisplayedNumber('2');
+        await wrapper.vm.handleSymbolClicked('+');
+        await wrapper.vm.updateDisplayedNumber('1');
+        await wrapper.find('#equal').trigger('click');
+    
+        expect(wrapper.vm.displayedNumber).toBe('3');
+      });
+    
+      it('respects the order of operations', async () => {
+        const wrapper = mount(Calculator);
+    
+        await wrapper.vm.updateDisplayedNumber('2');
+        await wrapper.vm.handleSymbolClicked('+');
+        await wrapper.vm.updateDisplayedNumber('3');
+        await wrapper.vm.handleSymbolClicked('*');
+        await wrapper.vm.updateDisplayedNumber('4');
         await wrapper.find('#equal').trigger('click');
     
         expect(wrapper.vm.displayedNumber).toBe('14');
-    });
-
-    it('handles division by zero with an error message', async () => {
+      });
+    
+      it('handles division by zero with an error message', async () => {
         const wrapper = mount(Calculator);
     
-        // Input for '1 / 0'
-        await wrapper.setData({ displayedNumber: '1/0' });
+        await wrapper.vm.updateDisplayedNumber('2');
+        await wrapper.vm.handleSymbolClicked('/');
+        await wrapper.vm.updateDisplayedNumber('0');
         await wrapper.find('#equal').trigger('click');
     
-        // Assuming your app displays an error in such cases
-        const resultBox = wrapper.find('#result').text();
-        expect(resultBox).toContain('ERROR');
-    });
-
-    it('shows an error for incomplete expressions', async () => {
-        const wrapper = mount(Calculator);
-    
-        // Input for incomplete expression like '5 +'
-        await wrapper.setData({ displayedNumber: '5+' });
-        await wrapper.find('#equal').trigger('click');
-    
-        const resultBox = wrapper.find('#result').text();
-        expect(resultBox).toContain('ERROR'); // Adjust based on how your app handles this case
-    });*/
+        expect(wrapper.vm.displayedNumber).toBe(null);
+      });
 });

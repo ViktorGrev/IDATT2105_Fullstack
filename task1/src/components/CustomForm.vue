@@ -11,6 +11,7 @@
       <button type="submit" class="btn" :disabled="!isFormValid">
         <span>Send</span>
       </button>
+      <p v-if="submissionStatus">{{ submissionStatus }}</p>
     </form>
     <nav>
       <RouterLink to="/">Calculator</RouterLink>
@@ -21,8 +22,10 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
-import { useFormStore } from '@/stores/counter'; // Oppdater denne stien etter behov
+import { useFormStore } from '@/stores/counter';
 import FormInput from '@/components/FormInput.vue';
+
+const submissionStatus = ref('');
 
 // Definerer props for komponenten
 const props = defineProps<{
@@ -71,16 +74,17 @@ const submitForm = async () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json(); // This might fail if the response is not JSON
+      const data = await response.json();
       console.log('Form submitted:', data);
-      // Handle success
+      // Update submission status for UI feedback
+      submissionStatus.value = 'Form submitted successfully';
     } catch (error) {
       console.error('Submission error:', error);
-      // Handle errors
+      submissionStatus.value = 'Submission failed';
     }
   } else {
     console.log('Form not submitted');
-    // Handle form validation failure
+    submissionStatus.value = 'Please fill in all fields';
   }
 };
 </script>
