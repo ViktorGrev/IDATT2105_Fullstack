@@ -3,7 +3,7 @@
     <form @submit.prevent="submitForm">
       <h3 id="title">{{ title }}</h3>
       <FormInput v-model="name" fieldName="Name" type="text"></FormInput>
-      <FormInput v-model="email" fieldName="Email" type="text"></FormInput>
+      <FormInput v-model="email" fieldName="Email" type="email"></FormInput>
       <br>
       <label for="feedback">Your feedback:</label>
       <textarea v-model="message" placeholder="Write here" rows="5" name="comment[text]" id="comment_text" cols="33"

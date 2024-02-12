@@ -7,10 +7,10 @@ import NumericInput from '../NumericInput.vue';
 import SymbolButton from '../SymbolButton.vue';
 
 describe('Calculator.vue', () => {
-    let wrapper: VueWrapper; // Explicitly type the wrapper variable
+    let wrapper: VueWrapper;
 
     beforeEach(() => {
-        wrapper = mount(Calculator) as VueWrapper; // Cast the result of mount to VueWrapper
+        wrapper = mount(Calculator) as VueWrapper;
     });
 
     it('initializes with a null displayed number', () => {
@@ -19,13 +19,11 @@ describe('Calculator.vue', () => {
     });
 
     it('updates displayed number on numeric button click', async () => {
-        // Ensure you have enough buttons rendered
         const numericButtons = wrapper.findAllComponents(NumericButton);
-        // Get the value prop of the second button
         const buttonValue = numericButtons[1].props('value');
         // Simulate a custom event on the second button, using the value prop
         numericButtons[1].vm.$emit('number-clicked', buttonValue);
-        await nextTick(); // Wait for Vue to update
+        await nextTick(); 
     
         const input = wrapper.findComponent(NumericInput);
         expect(input.props('displayedNumber')).toBe(String(buttonValue));
@@ -51,7 +49,7 @@ describe('Calculator.vue', () => {
         const wrapper = mount(Calculator);
         const input = wrapper.findComponent(NumericInput);
         await wrapper.vm.updateDisplayedNumber('200');
-        await wrapper.find('#del').trigger('click'); // Trigger clear
+        await wrapper.find('#del').trigger('click'); // Trigger del
         expect(input.props('displayedNumber')).toBe('20');
     });
 
@@ -62,7 +60,7 @@ describe('Calculator.vue', () => {
         await wrapper.vm.updateDisplayedNumber('2');
         await wrapper.vm.handleSymbolClicked('+');
         await wrapper.vm.updateDisplayedNumber('1');
-        await wrapper.find('#equal').trigger('click');
+        await wrapper.find('#equal').trigger('click'); // Trigger equal
     
         expect(wrapper.vm.displayedNumber).toBe('3');
       });

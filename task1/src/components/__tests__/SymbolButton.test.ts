@@ -4,7 +4,6 @@ import { mount } from '@vue/test-utils';
 import SymbolButton from '../SymbolButton.vue';
 
 describe('SymbolButton.vue', () => {
-  // Test 1: Component renders correctly and displays the `value`.
   it('renders and displays the value prop', () => {
     const value = '+';
     const wrapper = mount(SymbolButton, {
@@ -13,7 +12,6 @@ describe('SymbolButton.vue', () => {
     expect(wrapper.text()).toContain(value);
   });
 
-  // Test 2: The `symbol-clicked` event is emitted with the correct value when the button is clicked.
   it('emits the symbol-clicked event with the correct value', async () => {
     const value = '-';
     const wrapper = mount(SymbolButton, {
