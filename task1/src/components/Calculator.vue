@@ -23,18 +23,24 @@
           <p v-for="(result, index) in calculationResults" :key="index">{{ result }}</p>
         </div>
       </div>
+      <div>
+      <p id = "previous"></p>
+    </div>
       <nav>
         <RouterLink to="/">Calculator</RouterLink>
         <RouterLink to="/about">Forms</RouterLink>
       </nav>
+      <div>
+        <Button class="HandlingButton" id="previous" @click="checkPreviousResult">Previous</Button>
+      </div>
     </div>
-
   </main>
 </template>
   
 <script setup lang="ts">
 import { ref } from 'vue';
 import axios from 'axios';
+import { useUserStore } from '@/stores/counter';
 import NumericButton from '@/components/NumericButton.vue';
 import NumericInput from '@/components/NumericInput.vue';
 import SymbolButton from '@/components/SymbolButton.vue';
@@ -42,6 +48,8 @@ import SymbolButton from '@/components/SymbolButton.vue';
 const numbers = Array.from({ length: 10 }, (_, index) => index);
 const displayedNumber = ref<string | null>(null);
 const calculationResults = ref<string[]>([]);
+const store = useUserStore();
+console.log(store.user);
 
 const updateDisplayedNumber = (number: string) => {
   if (displayedNumber.value === null || displayedNumber.value === '0') {
@@ -67,6 +75,44 @@ const removeAll = () => {
   displayedNumber.value = null;
 };
 
+interface Calculation {
+  expression: string;
+  result: string;
+}
+
+const checkPreviousResult = async () => {
+  const apiUrl = 'http://localhost:8080/api/previous';
+  let username = store.user; // Assuming `store.user` contains the username
+  try {
+    const response = await axios.post(apiUrl, null, {
+      params: {
+        username: username
+      }
+    });
+
+    // Log the list received from the backend
+    console.log(response.data);
+
+    // Construct a string to display previous calculations
+    let previousCalculationsString = '';
+    response.data.forEach((calculation: Calculation) => { // Explicitly define the type of 'calculation'
+      previousCalculationsString += `Expression: ${calculation.expression}, Result: ${calculation.result}<br>`;
+    });
+
+    // Update the content of the <p> element with the previous calculations
+    const previousElement = document.getElementById('previous');
+    if (previousElement) {
+      previousElement.innerHTML = previousCalculationsString;
+    } else {
+      console.error('Element with id "previous" not found.');
+    }
+  } catch (error) {
+    console.error('Error fetching previous calculations:', error);
+  }
+};
+
+
+
 const hasDivideByZero = (expression: string) => /\/0/.test(expression);
 
 const sum = async () => {
@@ -80,8 +126,12 @@ const sum = async () => {
     try {
       // Replace this with the URL of your Spring Boot application
       const apiUrl = 'http://localhost:8080/api/calculator/calculate';
-      // Make an HTTP POST request to the backend
-      const response = await axios.post(apiUrl, { expression });
+      // Extract the username from the store or the current user context
+      let username = store.user;
+      // Append the username as a query parameter
+      const urlWithParams = `${apiUrl}?username=${encodeURIComponent(username)}`;
+      // Make sure to send the expression within the request body as expected
+      const response = await axios.post(urlWithParams, { expression }); // Only expression is in the body
       // Update the displayedNumber and calculationResults with the response from the backend
       calculationResults.value.push(`The result of ${expression} is: ${response.data.result}`);
       displayedNumber.value = String(response.data.result);
@@ -188,6 +238,11 @@ const sum = async () => {
 
 .NumericInput:hover {
   border-color: #2ecc71;
+}
+
+#previous {
+  font-size: 10px;
+  color: yellow;
 }
 </style>
   
