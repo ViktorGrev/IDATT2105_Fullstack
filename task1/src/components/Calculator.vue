@@ -40,6 +40,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/counter';
 import NumericButton from '@/components/NumericButton.vue';
 import NumericInput from '@/components/NumericInput.vue';
@@ -49,6 +50,7 @@ const numbers = Array.from({ length: 10 }, (_, index) => index);
 const displayedNumber = ref<string | null>(null);
 const calculationResults = ref<string[]>([]);
 const store = useUserStore();
+const router = useRouter();
 console.log(store.user);
 
 const updateDisplayedNumber = (number: string) => {
@@ -86,7 +88,8 @@ const checkPreviousResult = async () => {
   try {
     const response = await axios.post(apiUrl, null, {
       params: {
-        username: username
+        username: username,
+        tokenHeader: sessionStorage.getItem('jwtToken'),
       }
     });
 
@@ -112,10 +115,26 @@ const checkPreviousResult = async () => {
 };
 
 onMounted(async () => {
-  const token = sessionStorage.getItem('jwtToken');
+  /*const token = sessionStorage.getItem('jwtToken');
   if (token == null) {
     await router.push('/login');
-  }
+  }*/
+  const apiUrl = 'http://localhost:8080/api/validate';
+  let username = store.user; // Assuming `store.user` contains the username
+  try {
+    const response = await axios.post(apiUrl, null, {
+      params: {
+        username: username,
+        tokenHeader: sessionStorage.getItem('jwtToken'),
+      }
+    });
+    console.log(response.data);
+    if (!response.data) {
+      await router.push('/login');
+    }
+  } catch (error) {
+      await router.push('/login');
+    }
 });
 
 const hasDivideByZero = (expression: string) => /\/0/.test(expression);
