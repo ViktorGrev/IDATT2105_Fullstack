@@ -38,7 +38,7 @@
 </template>
   
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '@/stores/counter';
 import NumericButton from '@/components/NumericButton.vue';
@@ -111,7 +111,12 @@ const checkPreviousResult = async () => {
   }
 };
 
-
+onMounted(async () => {
+  const token = sessionStorage.getItem('jwtToken');
+  if (token == null) {
+    await router.push('/login');
+  }
+});
 
 const hasDivideByZero = (expression: string) => /\/0/.test(expression);
 
@@ -131,7 +136,7 @@ const sum = async () => {
       // Append the username as a query parameter
       const urlWithParams = `${apiUrl}?username=${encodeURIComponent(username)}`;
       // Make sure to send the expression within the request body as expected
-      const response = await axios.post(urlWithParams, { expression }); // Only expression is in the body
+      const response = await axios.post(urlWithParams, { expression });
       // Update the displayedNumber and calculationResults with the response from the backend
       calculationResults.value.push(`The result of ${expression} is: ${response.data.result}`);
       displayedNumber.value = String(response.data.result);
@@ -160,6 +165,8 @@ const sum = async () => {
       displayedNumber.value = null;
     }
   }*/
+
+  
 };
 </script>
   
