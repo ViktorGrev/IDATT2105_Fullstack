@@ -31,7 +31,7 @@
       async login() {
         try {
           // Replace this URL with your actual login endpoint
-          const response = await axios.post('http://localhost:8080/api/login', this.credentials);
+          const response = await axios.post('http://localhost:8080/api/token', this.credentials);
           if (response.data.success) {
             const userStore = useUserStore();
             userStore.setUser(this.credentials.username);
