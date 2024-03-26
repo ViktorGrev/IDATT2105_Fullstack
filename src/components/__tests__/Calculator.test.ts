@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { nextTick } from 'vue';
 import { mount, VueWrapper } from '@vue/test-utils';
-import Calculator from '../Calculator.vue';
+import Calculator from '../BaseCalculator.vue';
 import NumericButton from '../NumericButton.vue';
 import NumericInput from '../NumericInput.vue';
 import SymbolButton from '../SymbolButton.vue';
