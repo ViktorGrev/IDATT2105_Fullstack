@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x] # It's better to use a more recent LTS version of Node.js
+        node-version: [20.x] # Updated to use Node.js 20
 
     steps:
-      - uses: actions/checkout@v3 # Use the latest version of the checkout action
+      - uses: actions/checkout@v3 # No change, using the latest version as suggested
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Lint
-        run: npm run lint # Assuming you accepted linting when creating the project
+        run: npm run lint # Assuming you have linting setup
 
       - name: Run Unit Tests
         run: npm run test:unit
