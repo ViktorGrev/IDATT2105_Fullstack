@@ -20,5 +20,6 @@
   min-height: 100vh;
   font-size: 1.5rem;
   background-color:#222222;
+  border-radius: 1px;
   }
 </style>
